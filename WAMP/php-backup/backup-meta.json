@@ -1,0 +1,19 @@
+﻿{
+    "BackupDate":  "2026-04-01 15:52:07",
+    "SourceWampRoot":  "D:\\wamp64",
+    "SourcePhpDir":  "D:\\wamp64\\bin\\php",
+    "Versions":  [
+                     "php5.6.40",
+                     "php7.0.33",
+                     "php7.4.33",
+                     "php8.0.30",
+                     "php8.1.33",
+                     "php8.2.29",
+                     "php8.2.30",
+                     "php8.3.28",
+                     "php8.4.15",
+                     "php8.4.19",
+                     "php8.5.0",
+                     "php8.5.4"
+                 ]
+}

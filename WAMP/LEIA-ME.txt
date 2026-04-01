@@ -1,0 +1,201 @@
+================================================================================
+  WAMP PHP BACKUP & RESTORE - Manual de Instrucoes
+  Projeto: PHP Extension Automator
+================================================================================
+
+DESCRICAO
+---------
+Esta pasta contem os scripts para fazer backup completo das versoes PHP
+configuradas no WampServer (extensoes, DLLs, php.ini, browscap, php-tools)
+e restaura-las em qualquer nova instalacao do WampServer.
+
+
+================================================================================
+ESTRUTURA DA PASTA
+================================================================================
+
+  WAMP\
+  |
+  |-- backup-wamp.ps1          <- Script de backup (copiar do Wamp para ca)
+  |-- restore-wamp.ps1         <- Script de restauracao (copiar daqui pro Wamp)
+  |-- cleanup-imagick-duplicates.ps1 <- Corrige duplicatas de extension=imagick
+  |-- setup-browscap.ps1       <- Instala/configura o Browscap Full em todos PHP
+  |-- install-imagick.ps1      <- Instala ImageMagick (imagick 3.8.1) PHP 7.4+
+  |-- LEIA-ME.txt              <- Este arquivo
+  |
+  |-- php-backup\              <- (criado pelo backup-wamp.ps1)
+      |-- backup-meta.json     <- Metadados do backup (data, origem, versoes)
+      |-- php7.4.33\           <- Copia completa de cada versao PHP
+      |-- php8.0.30\
+      |-- php8.1.33\
+      |-- php8.2.29\
+      |-- php8.2.30\
+      |-- php8.3.28\
+      |-- php8.4.15\
+      |-- php8.4.19\
+      |-- php8.5.0\
+      |-- php8.5.4\
+      |-- php-tools\           <- Browscap, ferramentas customizadas, etc.
+
+
+================================================================================
+PRE-REQUISITOS
+================================================================================
+
+  1. PowerShell 5.1 ou superior (ja incluido no Windows 10/11)
+  2. Execute o PowerShell como ADMINISTRADOR
+  3. O WampServer deve estar instalado na maquina de destino (para o restore)
+  4. Espaco em disco suficiente para o backup (~2 a 6 GB dependendo das versoes)
+
+
+================================================================================
+PASSO A PASSO - FAZER BACKUP
+================================================================================
+
+  1. Abra o PowerShell como Administrador
+
+  2. Navegue ate a pasta WAMP:
+     cd "d:\pasta que salvou o projeto\WAMP"
+
+  3. Libere a politica de execucao temporariamente:
+     Set-ExecutionPolicy Bypass -Scope Process -Force
+
+  4. Execute o script de backup:
+     .\backup-wamp.ps1
+
+  5. Quando solicitado, informe o caminho do WampServer:
+     - Pressione ENTER para aceitar o padrao (D:\wamp64)
+     - Ou digite o caminho, ex: C:\wamp64
+
+  6. Confirme a listagem de versoes e o tamanho estimado digitando "S"
+
+  7. Aguarde a conclusao (pode demorar varios minutos)
+
+  O backup sera salvo em:
+     WAMP\php-backup\
+
+
+================================================================================
+PASSO A PASSO - RESTAURAR BACKUP (em novo WampServer)
+================================================================================
+
+  1. Copie toda a pasta "WAMP" para a maquina de destino
+
+  2. Instale o WampServer normalmente na maquina de destino
+
+  3. Abra o PowerShell como Administrador
+
+  4. Navegue ate a pasta WAMP copiada
+
+  5. Libere a politica de execucao:
+     Set-ExecutionPolicy Bypass -Scope Process -Force
+
+  6. Execute o script de restauracao:
+     .\restore-wamp.ps1
+
+  7. Quando solicitado, informe o caminho do WampServer de DESTINO:
+     Exemplos:
+       D:\wamp64              (instalacao padrao em D:)
+       C:\wamp64              (instalacao padrao em C:)
+       E:\dev\wampserver      (instalacao customizada)
+
+  8. Escolha o modo de conflito:
+     [1] Sobrescrever completamente  (recomendado)
+     [2] Ignorar versoes ja existentes
+     [3] Backup das existentes antes de sobrescrever
+
+  9. Confirme e aguarde a conclusao
+
+  10. Reinicie o WampServer
+
+  OBS: Os caminhos absolutos nos arquivos .ini (browscap, extension_dir, etc.)
+       sao ajustados automaticamente para o novo caminho do Wamp.
+
+
+================================================================================
+SCRIPTS UTILITARIOS (Instalacao Individual)
+================================================================================
+
+  setup-browscap.ps1
+  ------------------
+  Baixa e configura o Browscap Full (~118 MB) para todos os PHP 7.2+.
+  Uso: .\setup-browscap.ps1
+
+  install-imagick.ps1
+  -------------------
+  Baixa e instala o ImageMagick (imagick 3.8.1) para PHP 7.4 a 8.5.
+  Mapeia automaticamente o compilador correto (VC15/VS16/VS17) por versao.
+  Uso: .\install-imagick.ps1
+
+  cleanup-imagick-duplicates.ps1
+  ------------------------------
+  Caso o imagick tenha sido declarado multiplas vezes nos arquivos .ini,
+  este script remove as duplicatas e mantem exatamente uma declaracao ativa.
+  Uso: .\cleanup-imagick-duplicates.ps1
+
+
+================================================================================
+EXTENSOES CONFIGURADAS NO BACKUP
+================================================================================
+
+  As seguintes extensoes estao pre-configuradas em todas as versoes PHP
+  suportadas (7.4 a 8.5):
+
+  - imagick (ImageMagick 3.8.1)    -> Manipulacao de imagens
+  - browscap                        -> Deteccion de navegadores (Full, 118 MB)
+  - interbase / pdo_firebird        -> Banco de dados Firebird
+  - sqlsrv / pdo_sqlsrv             -> SQL Server (Microsoft)
+  - redis                           -> Cache Redis
+  - xdebug                          -> Debug e profiling (versoes compativeis)
+  - gd, mbstring, openssl, etc.     -> Extensoes padrao habilitadas
+
+
+================================================================================
+VERSOES PHP INCLUIDAS NO BACKUP
+================================================================================
+
+  Versao        Compilador   Status
+  ----------    ----------   ------
+  php7.4.33     VC15         Incluido
+  php8.0.30     VS16         Incluido
+  php8.1.33     VS16         Incluido
+  php8.2.29     VS16         Incluido
+  php8.2.30     VS16         Incluido
+  php8.3.28     VS16         Incluido
+  php8.4.15     VS17         Incluido
+  php8.4.19     VS17         Incluido
+  php8.5.0      VS17         Incluido
+  php8.5.4      VS17         Incluido
+  php5.6.40     VC11         NAO INCLUIDO (sem suporte imagick 3.8.1)
+  php7.0.33     VC14         NAO INCLUIDO (sem suporte imagick 3.8.1)
+
+
+================================================================================
+RESOLUCAO DE PROBLEMAS
+================================================================================
+
+  PROBLEMA: "Warning: Module 'imagick' already loaded"
+  SOLUCAO:  Execute cleanup-imagick-duplicates.ps1 e reinicie o WampServer.
+
+  PROBLEMA: "browscap: Unable to find browscap.ini"
+  SOLUCAO:  Execute setup-browscap.ps1 para reconfigurar o Browscap.
+            Verifique se o caminho em php.ini aponta para o arquivo correto.
+
+  PROBLEMA: Erro de permissao ao executar scripts
+  SOLUCAO:  Execute o PowerShell como Administrador e use:
+            Set-ExecutionPolicy Bypass -Scope Process -Force
+
+  PROBLEMA: Backup ocupa muito espaco
+  OBSERV:   Cada versao PHP com as DLLs do ImageMagick (~167 DLLs) ocupa
+            entre 200 e 500 MB. Com 10 versoes + browscap (118 MB), espere
+            entre 3 e 6 GB de backup total.
+
+  PROBLEMA: Caminhos errados apos restauracao
+  SOLUCAO:  O restore.ps1 ajusta automaticamente. Se persistir, busque
+            manualmente por "D:\wamp64" nos arquivos .ini e substitua pelo
+            novo caminho.
+
+
+================================================================================
+  Ultima atualizacao: Abril 2026
+================================================================================
