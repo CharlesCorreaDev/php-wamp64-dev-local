@@ -1,0 +1,9 @@
+{
+    "chat.mcp.serverSampling": {
+        "php-wamp64-dev-local/.vscode/mcp.json: io.github.github/github-mcp-server": {
+            "allowedModels": [
+                "ollama/Ollama/qwen3.5:cloud"
+            ]
+        }
+    }
+}
